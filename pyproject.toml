@@ -2,7 +2,7 @@
 name = "richer"
 version = "0.1.0"
 description = ""
-authors = ["birdca <kiancaca@gmail.com>"]
+authors = ["birdca <kiancaca@gmail.com>", "Tim Huang <t8522192@gmail.com>"]
 license = "Apache License 2.0"
 readme = "README.md"
 
