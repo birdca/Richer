@@ -4,7 +4,7 @@ import typing
 from loguru import logger
 from sqlalchemy import engine
 
-from financialdata.backend import clients
+from backend import clients
 
 
 def check_alive(
@@ -84,4 +84,3 @@ class Router:
 
     def close_connection(self):
         self._mysql_financialdata_conn.close()
-\
