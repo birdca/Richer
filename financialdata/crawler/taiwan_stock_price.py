@@ -5,7 +5,7 @@ import typing
 import pandas as pd
 import requests
 from loguru import logger
-from schema.dataset import (
+from financialdata.schema.dataset import (
     check_schema,
 )
 

@@ -3,7 +3,7 @@ from sqlalchemy import (
     engine,
 )
 
-from config import (MYSQL_DATA_USER, MYSQL_DATA_PASSWORD, MYSQL_DATA_HOST, MYSQL_DATA_PORT,
+from financialdata.config import (MYSQL_DATA_USER, MYSQL_DATA_PASSWORD, MYSQL_DATA_HOST, MYSQL_DATA_PORT,
                                   MYSQL_DATA_DATABASE)
 
 

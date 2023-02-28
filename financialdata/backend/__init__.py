@@ -1,4 +1,4 @@
-from backend.router import Router
+from financialdata.backend.router import Router
 
 router = Router()
 

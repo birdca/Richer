@@ -1,8 +1,9 @@
 import importlib
 import typing
 
-from backend import db
-from tasks.worker import app
+from financialdata.backend import router
+from financialdata.backend import db
+from financialdata.tasks.worker import app
 
 
 # 註冊 task, 有註冊的 task 才可以變成任務發送給 rabbitmq
@@ -16,4 +17,4 @@ def crawler(dataset: str, parameter: typing.Dict[str, str]):
         "crawler",
     )(parameter=parameter)
     # 上傳資料庫
-    db.upload_data(df, dataset, db.router.mysql_financialdata_conn)
+    db.upload_data(df, dataset, router.mysql_financialdata_conn)

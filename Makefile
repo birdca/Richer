@@ -21,7 +21,7 @@ run-celery-tpex:
 
 # sent task
 sent-taiwan-stock-price-task:
-	python financialdata/producer.py taiwan_stock_price 2021-04-01 2021-04-12
+	poetry run python financialdata/producer.py taiwan_stock_price 2021-04-01 2021-04-12
 
 # 建立 dev 環境變數
 gen-dev-env-variable:

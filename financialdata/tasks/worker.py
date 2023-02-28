@@ -1,5 +1,5 @@
 from celery import Celery
-from config import (
+from financialdata.config import (
     WORKER_ACCOUNT,
     WORKER_PASSWORD,
     MESSAGE_QUEUE_HOST,
