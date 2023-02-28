@@ -201,17 +201,12 @@ def crawler_twse(
     https://www.twse.com.tw/zh/page/trading/exchange/MI_INDEX.html
     """
     logger.info("crawler_twse")
-    # headers 中的 Request url
-    url = "https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date={date}&type=ALL"
-    url = url.format(
-        date=date.replace("-", "")
-    )
     # 避免被證交所 ban ip, 在每次爬蟲時, 先 sleep 5 秒
     time.sleep(5)
     # request method
-    res = requests.get(
-        url, headers=twse_header()
-    )
+    url = "https://www.twse.com.tw/exchangeReport/MI_INDEX"
+    payload = {'response': 'json', 'date': date, 'type': 'ALL'}
+    res = requests.post(url, data=payload, headers=twse_header())
     # 2009 年以後的資料, 股價在 response 中的 data9
     # 2009 年以後的資料, 股價在 response 中的 data8
     # 不同格式, 在證交所的資料中, 是很常見的,
