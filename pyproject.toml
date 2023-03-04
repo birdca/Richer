@@ -19,6 +19,7 @@ tqdm = "^4.64.1"
 sqlalchemy = "1.4.46"
 pymysql = "^1.0.2"
 celery = "^5.2.7"
+apscheduler = "^3.10.1"
 
 
 [build-system]
