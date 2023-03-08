@@ -7,6 +7,7 @@ license = "Apache License 2.0"
 readme = "README.md"
 packages = [
     { include = "financialdata" },
+    { include = "housedata" }
 ]
 
 [tool.poetry.dependencies]
@@ -20,6 +21,7 @@ sqlalchemy = "1.4.46"
 pymysql = "^1.0.2"
 celery = "^5.2.7"
 apscheduler = "^3.10.1"
+beautifulsoup4 = "4.11.2"
 flask = "^2.2.3"
 pyjwt = "^2.6.0"
 uvicorn = "^0.20.0"
