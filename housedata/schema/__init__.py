@@ -7,12 +7,10 @@ Base = declarative_base()
 
 class House(Base):
     __tablename__ = 'houses'
-
-    houseId = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
     userId = Column(Integer)
     postId = Column(Integer)
     regionId = Column(Integer)
-    regionName = Column(String(255))
     sectionId = Column(Integer)
     streetId = Column(Integer)
     type = Column(Integer)
@@ -20,11 +18,14 @@ class House(Base):
     floor = Column(Integer)
     allFloor = Column(Integer)
     room = Column(Integer)
-    area = Column(Float)
     price = Column(Integer)
-    cover = Column(String(255))
     updateTime = Column(Integer)
     closed = Column(Integer)
+    area = Column(Float)
+    coordinateX = Column(Float)
+    coordinateY = Column(Float)
+    cover = Column(String(255))
+    regionName = Column(String(255))
     sectionName = Column(String(255))
     fullAddress = Column(String(255))
     streetName = Column(String(255))
@@ -33,8 +34,8 @@ class House(Base):
     layout = Column(String(255))
     iconClass = Column(String(255))
     kindName = Column(String(255))
-    coordinateX = Column(Float)
-    coordinateY = Column(Float)
+    location = Column(String(255))
+
 
 #   "houseId":1,
 #   "userId":2,

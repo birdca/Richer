@@ -18,7 +18,7 @@ CONDITIONS = {
     # 'shape': '2',  # 公寓	1, 電梯大樓	2
     'searchtype': '1',
     'regionid': 1,  # 台北市 1, 新北市 3
-    'area':'7,40',
+    'area': '7,40',
     'rentprice': '4000,13000',
     'hasimg': '1',
     'not_cover': '1'
@@ -27,4 +27,5 @@ CONDITIONS = {
 
 WEB_URL_FORMAT_STR = "https://rent.591.com.tw/rent-detail-{}.html"
 
-PARSE_INTERVAL_IN_SECONDS = 8
+CRAWL_LIST_INTERVAL_IN_SECONDS = 5
+NEXT_CRAWL_INTERVAL_IN_SECONDS = 600  # we wait 10 minutes to start next crawl
