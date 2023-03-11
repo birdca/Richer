@@ -11,6 +11,10 @@ from constants import (
     API_URL, ROOT_URL, CONDITIONS, WEB_URL_FORMAT_STR, HEADERS,
     PARSE_INTERVAL_IN_SECONDS, MAP_URL_FORMAT_STR
 )
+from financialdata.backend.clients import get_mysql_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from housedata.schema import House
 
 cache = set()
 
@@ -107,20 +111,19 @@ def save_house(session, house):
         "streetName": house['street_name'],
         "alleyName": house['alley_name'],
         "caseName": house['cases_name'],
-        "caseId": house['cases_id'],
+        # "caseId": house['cases_id'],
         "layout": house['layout'],
         "room": house['room'],
         "area": house['area'],
         "floor": house['floor'],
         "allFloor": house['allfloor'],
         "updateTime": house['updatetime'],
-        "condition": house['condition'],
         "cover": house['cover'],
         # "refreshTime":house['refreshtime'],
         "closed": house['closed'],
         "kindName": house['kind_name'],
         "iconClass": house['icon_class'],
-        "fullAddress": house['fulladdress']
+        "fullAddress": house['fulladdress'],
     }
     target = MAP_URL_FORMAT_STR.format(raw['houseId'])
     res = session.get(target)
@@ -136,10 +139,21 @@ def save_house(session, house):
 
     raw["coordinateX"] = soup.find(id="lng").get('value') if soup.find(id="lng") else ""
     raw["coordinateY"] = soup.find(id="lat").get('value') if soup.find(id="lat") else ""
+    # json_body = json.dumps(raw)
+    # house = HouseModel.parse_raw(json_body)
+    # TODO move db session out this block for being reused, or reuse for next crawl?
+    Session = sessionmaker(bind=get_mysql_engine())
+    db_session = Session()
+    house_obj = House(**raw)
+    db_session.add(house_obj)
+    try:
+        db_session.commit()
+        # TODO here to decide if need house and notify Telegram
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        logger.info('find error')
+        logger.info(error)
 
-    json_body = json.dumps(raw)
-    # TODO insert into DB
-    # TODO decide need house and notify Telegram if success
     time.sleep(0.3)
 
 
