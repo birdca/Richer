@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import time
-import json
+import sys
 
 import requests
 from bs4 import BeautifulSoup
@@ -9,12 +9,13 @@ from bs4 import BeautifulSoup
 from logger import logger
 from constants import (
     API_URL, ROOT_URL, CONDITIONS, WEB_URL_FORMAT_STR, HEADERS,
-    PARSE_INTERVAL_IN_SECONDS, MAP_URL_FORMAT_STR
+    CRAWL_LIST_INTERVAL_IN_SECONDS, MAP_URL_FORMAT_STR, NEXT_CRAWL_INTERVAL_IN_SECONDS
 )
 from financialdata.backend.clients import get_mysql_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from housedata.schema import House
+from housedata.bots.telegram_bot import send_message
 
 cache = set()
 
@@ -53,13 +54,13 @@ def get_houses(session):
         # link to check region id mapping
         # https://github.com/g0v/tw-rental-house-data/blob/master/crawler/crawler/spiders/all_591_cities.py
         if len(houses) < 30:
-            if CONDITIONS['kind'] < 2: # try 獨立套房: 1, 分租套房: 2
+            if CONDITIONS['kind'] < 2:  # try 獨立套房: 1, 分租套房: 2
                 CONDITIONS['kind'] += 1
             else:
                 CONDITIONS['firstRow'] = 0
                 CONDITIONS['regionid'] += 2
                 CONDITIONS['kind'] = 1
-        if CONDITIONS['regionid'] >= 5: # we only want 台北市 1, 新北市 3
+        if CONDITIONS['regionid'] >= 5:  # we only want 台北市 1, 新北市 3
             crawler1.is_crawler_looping = False
             logger.info("crawling stop + {}".format(crawler1.is_crawler_looping))
 
@@ -75,13 +76,6 @@ def log_house_info(house):
             house['fulladdress'],
         )
     )
-    # logger.info("網址：{}".format(WEB_URL_FORMAT_STR.format(house['post_id'])))
-    # logger.info("租金：{} {}".format(house['price'], house['unit']))
-    # logger.info("坪數：{} 坪".format(house['area']))
-    # logger.info("格局：{}".format(house['layout']))
-    # logger.info("更新時間：{}".format(time.ctime(house['refreshtime'])))
-    # logger.info("\n")
-
 
 def search_houses(session):
     houses = get_houses(session)
@@ -98,7 +92,8 @@ def save_house(session, house):
     if house['floor'] <= 1:  # filter house contains unwanted floor (ex. 1F, B1)
         return
     raw = {
-        "houseId": house['id'],
+        "id": house['id'],
+        "location": house['location'],
         "userId": house['user_id'],
         "type": house['type'],
         "kind": house['kind'],
@@ -125,7 +120,7 @@ def save_house(session, house):
         "iconClass": house['icon_class'],
         "fullAddress": house['fulladdress'],
     }
-    target = MAP_URL_FORMAT_STR.format(raw['houseId'])
+    target = MAP_URL_FORMAT_STR.format(raw['id'])
     res = session.get(target)
     get_price = house['price']
     is_string = isinstance(get_price, str)
@@ -139,8 +134,7 @@ def save_house(session, house):
 
     raw["coordinateX"] = soup.find(id="lng").get('value') if soup.find(id="lng") else ""
     raw["coordinateY"] = soup.find(id="lat").get('value') if soup.find(id="lat") else ""
-    # json_body = json.dumps(raw)
-    # house = HouseModel.parse_raw(json_body)
+
     # TODO move db session out this block for being reused, or reuse for next crawl?
     Session = sessionmaker(bind=get_mysql_engine())
     db_session = Session()
@@ -148,13 +142,24 @@ def save_house(session, house):
     db_session.add(house_obj)
     try:
         db_session.commit()
-        # TODO here to decide if need house and notify Telegram
+        send_bot_message(raw)  # here to notify in Telegram
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         logger.info('find error')
         logger.info(error)
 
-    time.sleep(0.3)
+    time.sleep(1)
+
+
+def send_bot_message(dic):
+    send_message(f"""
+    {dic['fullAddress']}
+    {dic['location']}
+    {dic['room']}房/{dic['kindName']}: {dic['area']}坪, {dic['floor']}/{dic['allFloor']}樓 {dic['price']}元
+    {dic['cover']}
+    see: https://rent.591.com.tw/rent-detail-{dic['id']}.html
+    location: https://www.google.com/maps/search/?api=1&query={dic['coordinateY']},{dic['coordinateX']}
+""")
 
 
 def set_csrf_token(session):
@@ -165,15 +170,21 @@ def set_csrf_token(session):
     session.headers['X-CSRF-TOKEN'] = token_item.get('content')
 
 
-def main():
+def crawl_591():
     session = requests.Session()
-
     while crawler1.is_crawler_looping:
         set_csrf_token(session)
         search_houses(session)
-        time.sleep(PARSE_INTERVAL_IN_SECONDS)
+        time.sleep(CRAWL_LIST_INTERVAL_IN_SECONDS)
         CONDITIONS['firstRow'] += 30
         print(CONDITIONS['firstRow'])
+
+
+def main(times=sys.maxsize):
+    while times >= 0:
+        crawl_591()
+        time.sleep(NEXT_CRAWL_INTERVAL_IN_SECONDS)
+        times -= 1
 
 
 if __name__ == "__main__":
