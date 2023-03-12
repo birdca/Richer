@@ -172,6 +172,7 @@ def set_csrf_token(session):
 
 def crawl_591():
     session = requests.Session()
+    crawler1.is_crawler_looping = True
     while crawler1.is_crawler_looping:
         set_csrf_token(session)
         search_houses(session)
