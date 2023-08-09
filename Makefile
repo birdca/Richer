@@ -1,4 +1,12 @@
 
+# 建立 network
+create-network:
+	docker network create my_network
+
+# 建立 mysql volume
+create-mysql-volume:
+	docker volume create mysql
+
 # 啟動 mysql
 create-mysql:
 	docker-compose -f mysql.yml up -d
