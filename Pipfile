@@ -52,8 +52,6 @@ vine = "==5.0.0"
 wcwidth = "==0.2.6"
 werkzeug = "==2.3.6"
 win32-setctime = "==1.1.0"
-financialdata = { editable = true, path = "." }
-api = { editable = true, path = "." }
 richer = {editable = true, path = "."}
 
 [dev-packages]
