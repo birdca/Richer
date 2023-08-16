@@ -12,6 +12,12 @@ services:
       RABBITMQ_DEFAULT_USER: "worker"
       RABBITMQ_DEFAULT_PASS: "worker"
       RABBITMQ_DEFAULT_VHOST: "/"
+    # swarm 設定
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.rabbitmq == true ]
     networks:
       - my_network
 
@@ -22,11 +28,13 @@ services:
       # docker publish port 5555 to 5555 
       # (將 docker 內部 ip 5555, 跟外部 5555 做連結)
       - 5555:5555
-    depends_on:
-      - rabbitmq
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.flower == true ]
     networks:
       - my_network
-    platform: linux/amd64
 
 networks:
   my_network:
