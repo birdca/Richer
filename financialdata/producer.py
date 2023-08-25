@@ -2,8 +2,10 @@ import importlib
 import sys
 
 from loguru import logger
+
 from financialdata.backend import router
 from financialdata.tasks.task import crawler
+
 
 def Update(dataset: str, start_date: str, end_date: str):
     # 拿取每個爬蟲任務的參數列表，

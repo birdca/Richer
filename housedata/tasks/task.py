@@ -1,5 +1,5 @@
-from housedata.tasks.worker import app
 from housedata.crawler import main
+from housedata.tasks.worker import app
 
 
 @app.task()

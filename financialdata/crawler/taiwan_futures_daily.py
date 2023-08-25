@@ -5,6 +5,7 @@ import typing
 
 import pandas as pd
 import requests
+
 from financialdata.schema.dataset import check_schema
 
 
@@ -61,10 +62,7 @@ def colname_zh2en(
         ],
         axis=1,
     )
-    df.columns = [
-        colname_dict[col]
-        for col in df.columns
-    ]
+    df.columns = [colname_dict[col] for col in df.columns]
     return df
 
 
@@ -72,30 +70,18 @@ def clean_data(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
     """資料清理"""
-    df["Date"] = df["Date"].str.replace(
-        "/", "-"
-    )
-    df["ChangePer"] = df[
-        "ChangePer"
-    ].str.replace("%", "")
-    df["ContractDate"] = (
-        df["ContractDate"]
-        .astype(str)
-        .str.replace(" ", "")
-    )
+    df["Date"] = df["Date"].str.replace("/", "-")
+    df["ChangePer"] = df["ChangePer"].str.replace("%", "")
+    df["ContractDate"] = df["ContractDate"].astype(str).str.replace(" ", "")
     if "TradingSession" in df.columns:
-        df["TradingSession"] = df[
-            "TradingSession"
-        ].map(
+        df["TradingSession"] = df["TradingSession"].map(
             {
                 "一般": "Position",
                 "盤後": "AfterMarket",
             }
         )
     else:
-        df[
-            "TradingSession"
-        ] = "Position"
+        df["TradingSession"] = "Position"
     for col in [
         "Open",
         "Max",
@@ -107,11 +93,7 @@ def clean_data(
         "SettlementPrice",
         "OpenInterest",
     ]:
-        df[col] = (
-            df[col]
-            .replace("-", "0")
-            .astype(float)
-        )
+        df[col] = df[col].replace("-", "0").astype(float)
     df = df.fillna(0)
     return df
 
@@ -124,12 +106,8 @@ def crawler_futures(
     form_data = {
         "down_type": "1",
         "commodity_id": "all",
-        "queryStartDate": date.replace(
-            "-", "/"
-        ),
-        "queryEndDate": date.replace(
-            "-", "/"
-        ),
+        "queryStartDate": date.replace("-", "/"),
+        "queryEndDate": date.replace("-", "/"),
     }
     # 避免被期交所 ban ip, 在每次爬蟲時, 先 sleep 5 秒
     time.sleep(5)
@@ -141,11 +119,7 @@ def crawler_futures(
     if resp.ok:
         if resp.content:
             df = pd.read_csv(
-                io.StringIO(
-                    resp.content.decode(
-                        "big5"
-                    )
-                ),
+                io.StringIO(resp.content.decode("big5")),
                 index_col=False,
             )
     else:
@@ -169,11 +143,9 @@ def gen_parameter_list(history: bool) -> typing.Dict[str, typing.List[str]]:
     end_date = datetime.date.today()
     days = (end_date - start_date).days + 1
     parameter_list = [
-        dict(date=str(start_date + datetime.timedelta(days=day)))
-        for day in range(days)
+        dict(date=str(start_date + datetime.timedelta(days=day))) for day in range(days)
     ]
     return parameter_list
-
 
 
 def crawler(

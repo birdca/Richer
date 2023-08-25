@@ -1,8 +1,7 @@
 import importlib
 import typing
 
-from financialdata.backend import router
-from financialdata.backend import db
+from financialdata.backend import db, router
 from financialdata.tasks.worker import app
 
 

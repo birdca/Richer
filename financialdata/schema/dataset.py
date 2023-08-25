@@ -1,7 +1,7 @@
-from pydantic import BaseModel
 import importlib
 
 import pandas as pd
+from pydantic import BaseModel
 
 
 class TaiwanStockPrice(BaseModel):

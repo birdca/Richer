@@ -1,9 +1,10 @@
 from celery import Celery
+
 from financialdata.config import (
-    WORKER_ACCOUNT,
-    WORKER_PASSWORD,
     MESSAGE_QUEUE_HOST,
     MESSAGE_QUEUE_PORT,
+    WORKER_ACCOUNT,
+    WORKER_PASSWORD,
 )
 
 broker = (

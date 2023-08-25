@@ -1,5 +1,5 @@
-import socket
 import os
+import socket
 from configparser import ConfigParser
 
 HOME_PATH = "/".join(os.path.abspath(__file__).split("/")[:-1])

@@ -5,34 +5,19 @@ import typing
 import pandas as pd
 import requests
 from loguru import logger
-from financialdata.schema.dataset import (
-    check_schema,
-)
+
+from financialdata.schema.dataset import check_schema
+
 
 def is_weekend(day: int) -> bool:
     return day in [5, 6]
 
-def gen_task_paramter_list(
-    start_date: str, end_date: str
-) -> typing.List[str]:
-    start_date = (
-        datetime.datetime.strptime(
-            start_date, "%Y-%m-%d"
-        ).date()
-    )
-    end_date = (
-        datetime.datetime.strptime(
-            end_date, "%Y-%m-%d"
-        ).date()
-    )
-    days = (
-        end_date - start_date
-    ).days + 1
-    date_list = [
-        start_date
-        + datetime.timedelta(days=day)
-        for day in range(days)
-    ]
+
+def gen_task_paramter_list(start_date: str, end_date: str) -> typing.List[str]:
+    start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+    days = (end_date - start_date).days + 1
+    date_list = [start_date + datetime.timedelta(days=day) for day in range(days)]
     # 排除掉周末非交易日
     date_list = [
         dict(
@@ -47,6 +32,7 @@ def gen_task_paramter_list(
         if not is_weekend(d.weekday())
     ]
     return date_list
+
 
 def clear_data(
     df: pd.DataFrame,
@@ -110,6 +96,7 @@ def tpex_header():
         "X-Requested-With": "XMLHttpRequest",
     }
 
+
 def twse_header():
     """網頁瀏覽時, 所帶的 request header 參數, 模仿瀏覽器發送 request"""
     return {
@@ -153,10 +140,7 @@ def colname_zh2en(
         "最後揭示賣量": "",
         "本益比": "",
     }
-    df.columns = [
-        taiwan_stock_price[col]
-        for col in colname
-    ]
+    df.columns = [taiwan_stock_price[col] for col in colname]
     df = df.drop([""], axis=1)
     return df
 
@@ -171,15 +155,11 @@ def crawler_tpex(
     logger.info("crawler_tpex")
     # headers 中的 Request url
     url = "https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={date}&se=AL"
-    url = url.format(
-        date=convert_date(date)
-    )
+    url = url.format(date=convert_date(date))
     # 避免被櫃買中心 ban ip, 在每次爬蟲時, 先 sleep 5 秒
     time.sleep(5)
     # request method
-    res = requests.get(
-        url, headers=tpex_header()
-    )
+    res = requests.get(url, headers=tpex_header())
     data = res.json().get("aaData", [])
     df = pd.DataFrame(data)
     if not data or len(df) == 0:
@@ -205,7 +185,7 @@ def crawler_twse(
     time.sleep(5)
     # request method
     url = "https://www.twse.com.tw/exchangeReport/MI_INDEX"
-    payload = {'response': 'json', 'date': date, 'type': 'ALL'}
+    payload = {"response": "json", "date": date, "type": "ALL"}
     res = requests.post(url, data=payload, headers=twse_header())
     # 2009 年以後的資料, 股價在 response 中的 data9
     # 2009 年以後的資料, 股價在 response 中的 data8
@@ -214,19 +194,11 @@ def crawler_twse(
     df = pd.DataFrame()
     try:
         if "data9" in res.json():
-            df = pd.DataFrame(
-                res.json()["data9"]
-            )
-            colname = res.json()[
-                "fields9"
-            ]
+            df = pd.DataFrame(res.json()["data9"])
+            colname = res.json()["fields9"]
         elif "data8" in res.json():
-            df = pd.DataFrame(
-                res.json()["data8"]
-            )
-            colname = res.json()[
-                "fields8"
-            ]
+            df = pd.DataFrame(res.json()["data8"])
+            colname = res.json()["fields8"]
         elif res.json()["stat"] in [
             "查詢日期小於93年2月11日，請重新查詢!",
             "很抱歉，沒有符合條件的資料!",
@@ -239,9 +211,7 @@ def crawler_twse(
     if len(df) == 0:
         return pd.DataFrame()
     # 欄位中英轉換
-    df = colname_zh2en(
-        df.copy(), colname
-    )
+    df = colname_zh2en(df.copy(), colname)
     df["Date"] = date
     df = convert_change(df.copy())
     df = clear_data(df.copy())
@@ -252,22 +222,9 @@ def convert_change(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
     logger.info("convert_change")
-    df["Dir"] = (
-        df["Dir"]
-        .str.split(">")
-        .str[1]
-        .str.split("<")
-        .str[0]
-    )
-    df["Change"] = (
-        df["Dir"] + df["Change"]
-    )
-    df["Change"] = (
-        df["Change"]
-        .str.replace(" ", "")
-        .str.replace("X", "")
-        .astype(float)
-    )
+    df["Dir"] = df["Dir"].str.split(">").str[1].str.split("<").str[0]
+    df["Change"] = df["Dir"] + df["Change"]
+    df["Change"] = df["Change"].str.replace(" ", "").str.replace("X", "").astype(float)
     df = df.fillna("")
     df = df.drop(["Dir"], axis=1)
     return df
@@ -276,18 +233,12 @@ def convert_change(
 def crawler(
     parameter: typing.Dict[
         str,
-        typing.List[
-            typing.Union[
-                str, int, float
-            ]
-        ],
+        typing.List[typing.Union[str, int, float]],
     ]
 ) -> pd.DataFrame:
     logger.info(parameter)
     date = parameter.get("date", "")
-    data_source = parameter.get(
-        "data_source", ""
-    )
+    data_source = parameter.get("data_source", "")
     if data_source == "twse":
         df = crawler_twse(date)
     elif data_source == "tpex":

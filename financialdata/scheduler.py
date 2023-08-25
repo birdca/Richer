@@ -1,23 +1,16 @@
-import time
 import datetime
+import time
 
-from apscheduler.schedulers.background import (
-    BackgroundScheduler,
-)
-from financialdata.producer import (
-    Update,
-)
+from apscheduler.schedulers.background import BackgroundScheduler
 from loguru import logger
+
+from financialdata.producer import Update
 
 
 def sent_crawler_task():
     # 將此段，改成發送任務的程式碼
     # logger.info(f"sent_crawler_task {dataset}")
-    today = (
-        datetime.datetime.today()
-        .date()
-        .strftime("%Y-%m-%d")
-    )
+    today = datetime.datetime.today().date().strftime("%Y-%m-%d")
     Update(
         dataset="taiwan_stock_price",
         start_date=today,
@@ -26,9 +19,7 @@ def sent_crawler_task():
 
 
 def main():
-    scheduler = BackgroundScheduler(
-        timezone="Asia/Taipei"
-    )
+    scheduler = BackgroundScheduler(timezone="Asia/Taipei")
     # 與 crontab 類似，設定何時執行，有小時、分鐘、秒參數，* 星號代表任意時間點
     scheduler.add_job(
         id="sent_crawler_task",
