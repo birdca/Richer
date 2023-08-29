@@ -1,10 +1,14 @@
 import pandas as pd
 from fastapi import FastAPI
 from sqlalchemy import create_engine, engine
+from api import config
 
 
 def get_mysql_financialdata_conn() -> engine.base.Connection:
-    address = "mysql+pymysql://root:test@127.0.0.1:3306/financialdata"
+    address = (
+        f"mysql+pymysql://{config.MYSQL_DATA_USER}:{config.MYSQL_DATA_PASSWORD}"
+        f"@{config.MYSQL_DATA_HOST}:{config.MYSQL_DATA_PORT}/{config.MYSQL_DATA_DATABASE}"
+    )
     engine = create_engine(address)
     connect = engine.connect()
     return connect
@@ -20,9 +24,9 @@ def read_root():
 
 @app.get("/taiwan_stock_price")
 def taiwan_stock_price(
-    stock_id: str = "",
-    start_date: str = "",
-    end_date: str = "",
+        stock_id: str = "",
+        start_date: str = "",
+        end_date: str = "",
 ):
     sql = f"""
     select * from taiwan_stock_price
