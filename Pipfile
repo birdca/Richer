@@ -54,5 +54,8 @@ werkzeug = "==2.3.6"
 win32-setctime = "==1.1.0"
 richer = {editable = true, path = "."}
 pytest = "*"
+httpx = "*"
+pytest-cov = "*"
+pytest-mock = "*"
 
 [dev-packages]
