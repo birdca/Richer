@@ -1,24 +1,25 @@
 name: Add default Assignee on Opened PR
 on:
-    pull_request:
-        types: [ opened ]
+  pull_request:
+    types: [ opened ]
 
 jobs:
-    default-assignee-on-pr-opened:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/github-script@v6
-              with:
-                github-token: "${{ secrets.GITHUB_TOKEN }}"
-                script: |
-                  const pullParam = { owner: context.issue.owner, repo: context.issue.repo, pull_number: context.issue.number}
-                  const repoResponse = await github.rest.pulls.get({...pullParam})
-
-                  const repoData = repoResponse.data
-                  if (repoData.assignee == null) {
-                    await github.rest.issues.addAssignees ({
-                      ...pullParam,
-                      issue_number: context.issue.number,
-                      assignees: [repoData.user.login]
-                    })
-                  }
+  default-assignee-on-pr-opened:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          script: |
+            const pullParam = { owner: context.issue.owner, repo: context.issue.repo, pull_number: context.issue.number}
+            const repoResponse = await github.rest.pulls.get({...pullParam})
+            
+            const repoData = repoResponse.data
+            if (repoData.assignee == null) {
+              await github.rest.issues.addAssignees ({
+                ...pullParam,
+                issue_number: context.issue.number,
+                assignees: [repoData.user.login]
+              })
+            }
