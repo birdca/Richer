@@ -20,6 +20,7 @@ def get_mysql_financialdata_conn() -> engine.base.Connection:
         f"mysql+pymysql://{MYSQL_DATA_USER}:{MYSQL_DATA_PASSWORD}"
         f"@{MYSQL_DATA_HOST}:{MYSQL_DATA_PORT}/{MYSQL_DATA_DATABASE}"
     )
+    print(address)
     engine = create_engine(address)
     connect = engine.connect()
     return connect

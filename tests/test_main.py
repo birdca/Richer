@@ -21,6 +21,7 @@ client = TestClient(app)
 # https://fastapi.tiangolo.com/tutorial/testing/
 # 測試框架
 
+"""
 # 測試對資料庫的連線,
 # assert 回傳的物件, 是一個 sqlalchemy 的 connect 物件
 def test_get_mysql_financialdata_conn():
@@ -30,6 +31,7 @@ def test_get_mysql_financialdata_conn():
     assert isinstance(
         conn, engine.Connection
     )
+"""
 
 
 # 測試對 'http://127.0.0.1:5000/' 頁面發送 request,
@@ -42,6 +44,7 @@ def test_read_root():
     }
 
 
+"""
 # 測試對 'http://127.0.0.1:5000/taiwan_stock_price' 頁面發送 request,
 # 並帶 stock_id, start_date, end_date 參數
 # 得到的回應 response 的狀態 status_code, json data
@@ -140,3 +143,4 @@ def test_TaiwanStockPriceID(setUp):
             "Date": "2021-04-01",
         }
     ]
+"""

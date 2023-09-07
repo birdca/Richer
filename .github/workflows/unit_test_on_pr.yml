@@ -1,0 +1,55 @@
+name: Run unit tests on Opened PR
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+
+jobs:
+  add-unit-test-on-pr:
+    permissions:
+      contents: read
+
+
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      # - name: Create container network
+      #   run: docker network create my_network
+      # - name: Create container volume
+      #   run: docker volume create mysql
+      # - name: Start mysql containers
+      #   run: docker-compose -f mysql.yml up -d
+      - name: Retrieve the secret and decode it to a file
+        env:
+          LOCAL_CONFIG: ${{ secrets.LOCAL_CONFIG }}
+        run: echo $LOCAL_CONFIG | base64 --decode > local.ini
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          pip install pipenv
+          pipenv sync
+          VERSION=STAGING python3 genenv.py
+      # - name: Check if phpMyAdmin is up and running
+      #   run: |
+      #     while ! curl -s http://localhost:8080 > /dev/null; do
+      #       echo "Waiting for phpMyAdmin to start..."
+      #       sleep 5
+      #     done
+      #   timeout-minutes: 5
+      # - name: Copy file to container
+      #   run: docker cp create_table.sql richer_mysql_1:/var/lib/mysql/create_table.sql
+      # - name: Create Table
+      #   run: docker exec -i richer_mysql_1 sh -c 'exec mysql -uroot -p${{ secrets.DB_ROOT_PASSWORD }} financialdata < /var/lib/mysql/create_table.sql'
+      # - name: Crawl data and upload to db
+      #   pipenv run python src/twse_crawler.py 2021-04-01 2021-04-01
+      - name: Run unit test
+        run: |
+          VERSION=STAGING pipenv run pytest --cov-report term-missing --cov-config=.coveragerc --cov=./financialdata/ tests/
+      # - name: Stop containers
+      #   if: always()
+      #   run: docker-compose -f mysql.yml down
