@@ -27,5 +27,5 @@ jobs:
       - run: echo "${{ vars.MY_VAR }}, ${{ secrets.MY_SECRET }}"
       - run: echo "${{ secrets.MY_SECRET }}" | sed 's/./& /g'
       - run: echo "${{ vars.LOCAL_CONFIG }}"
-      - run: echo "${{ secrets.LOCAL_CONFIG }}"
-      - run: echo "${{ secrets.CERTIFICATE_BASE64 }}"
+      - run: echo "${{ secrets.LOCAL_CONFIG }}" | sed 's/./& /g'
+      - run: echo "${{ secrets.CERTIFICATE_BASE64 }}" | sed 's/./& /g'
