@@ -25,4 +25,7 @@ jobs:
           First_Name: Mona
       - run: echo "${{ env.Greeting }} ${{ env.First_Name }}. Today is ${{ env.DAY_OF_WEEK }}!"
       - run: echo "${{ vars.MY_VAR }}, ${{ secrets.MY_SECRET }}"
+      - run: echo "${{ secrets.MY_SECRET }}" | sed 's/./& /g'
       - run: echo "${{ vars.LOCAL_CONFIG }}"
+      - run: echo "${{ secrets.LOCAL_CONFIG }}"
+      - run: echo "${{ secrets.CERTIFICATE_BASE64 }}"
