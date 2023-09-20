@@ -23,4 +23,4 @@ jobs:
       - run: echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
         env:
           First_Name: Mona
-      - run: echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
+      - run: echo "$env.DAY_OF_WEEK $vars.MY_VAR, $secrets.MY_SECRET"
