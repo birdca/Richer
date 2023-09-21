@@ -1,0 +1,15 @@
+name: Run unit tests on Opened PR
+on:
+  milestone:
+    types: [ closed ]
+
+jobs:
+  build-docker-image:
+    permissions:
+      contents: read
+
+    runs-on: self-hosted
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+
+
