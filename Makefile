@@ -19,6 +19,10 @@ create-rabbitmq:
 install-python-env:
 	poetry install
 
+# 伺服器
+run-server:
+	docker-compose -f api.yml up -d
+
 # 啟動 celery, 專門執行 twse queue 列隊的任務，
 run-celery-twse:
 	 celery -A financialdata.tasks.worker worker --loglevel=info --concurrency=1  --hostname=%h -Q twse
@@ -26,6 +30,7 @@ run-celery-twse:
 # 啟動 celery, 專門執行 tpex queue 列隊的任務，
 run-celery-tpex:
 	celery -A financialdata.tasks.worker worker --loglevel=info --concurrency=1  --hostname=%h -Q tpex
+
 
 # sent task
 sent-taiwan-stock-price-task:

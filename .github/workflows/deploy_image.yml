@@ -23,5 +23,5 @@ jobs:
           DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
           docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
-          docker pull richer1018/crawler:9.0.0
+          docker pull richer1018/crawler:9.0.3
           docker stack deploy --with-registry-auth -c crawler.yml financialdata
