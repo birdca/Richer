@@ -57,5 +57,6 @@ pytest = "*"
 httpx = "*"
 pytest-cov = "*"
 pytest-mock = "*"
+python-dotenv = "*"
 
 [dev-packages]
