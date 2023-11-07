@@ -10,6 +10,8 @@ jobs:
       contents: read
 
     runs-on: ubuntu-latest
+    env:
+      tags: ${{ steps.meta.outputs.tags }}
 
     steps:
       - name: Check out code
@@ -20,8 +22,6 @@ jobs:
         run: |
           echo $LOCAL_CONFIG | base64 --decode > local.ini
       - name: Build docker image
-        with:
-          tags: ${{ steps.meta.outputs.tags }}
         run: |
           echo $tags
         #          docker build -f Dockerfile -t richer1018/crawler:9.0.0 .
