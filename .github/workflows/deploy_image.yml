@@ -10,8 +10,6 @@ jobs:
       contents: read
 
     runs-on: ubuntu-latest
-    env:
-      tags: ${{ steps.meta.outputs.tags }}
 
     steps:
       - name: Check out code
