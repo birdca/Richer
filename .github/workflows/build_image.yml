@@ -1,4 +1,4 @@
-name: Run unit tests on Opened PR
+name: Build Image
 on:
   pull_request:
     types: [ labeled ]
