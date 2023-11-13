@@ -48,10 +48,14 @@ jobs:
           LOCAL_CONFIG: ${{ secrets.LOCAL_CONFIG }}
         run: |
           echo $LOCAL_CONFIG | base64 --decode > local.ini
-      - name: Pull docker image
-        env:
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Test in deploy
         run: |
-        #          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
+          echo $RELEASE_VERSION
+          echo ${{ env.RELEASE_VERSION }}
+#      - name: Pull docker image
+#        env:
+#          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+#        run: |
+#          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
 #          docker pull richer1018/crawler:9.0.0
 #          docker stack deploy --with-registry-auth -c api.yml api
