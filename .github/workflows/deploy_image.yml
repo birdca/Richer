@@ -19,22 +19,18 @@ jobs:
           LOCAL_CONFIG: ${{ secrets.LOCAL_CONFIG }}
         run: |
           echo $LOCAL_CONFIG | base64 --decode > local.ini
-      - name: Set env
+      - name: Set Release tag to env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      - name: Test
+      - name: Build docker image
         run: |
-          echo $RELEASE_VERSION
-          echo ${{ env.RELEASE_VERSION }}
-        #      - name: Build docker image
-        #        run: |
-        #          echo $tags
-        #          docker build -f Dockerfile -t richer1018/crawler:9.0.0 .
-        #      - name: Push docker image
-        #        env:
-        #          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-        #        run: |
-        #          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
-  #          docker push richer1018/application:9.0.0
+          echo $tags
+          docker build -f Dockerfile -t richer1018/application:9.0.9 .
+      - name: Push docker image
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+        run: |
+          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
+          docker push richer1018/application:9.0.9
   deploy-docker-image:
     permissions:
       contents: read
@@ -48,14 +44,12 @@ jobs:
           LOCAL_CONFIG: ${{ secrets.LOCAL_CONFIG }}
         run: |
           echo $LOCAL_CONFIG | base64 --decode > local.ini
-      - name: Test in deploy
+      - name: Set Release tag to env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Pull docker image
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
-          echo $RELEASE_VERSION
-          echo ${{ env.RELEASE_VERSION }}
-#      - name: Pull docker image
-#        env:
-#          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-#        run: |
-#          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
-#          docker pull richer1018/crawler:9.0.0
-#          docker stack deploy --with-registry-auth -c api.yml api
+          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
+          docker pull richer1018/application:9.0.9
+          docker stack deploy --with-registry-auth -c api.yml api
