@@ -60,4 +60,6 @@ jobs:
           # 這邊要用 while 迴圈，因為有時候會 pull 失敗
           while ! docker pull richer1018/application:$RELEASE_VERSION; do sleep 5; done
           echo "Pull docker image success, start to deploy"
+      - name: Deploy docker image
+        run: |
           docker stack deploy --with-registry-auth -c api.yml api
