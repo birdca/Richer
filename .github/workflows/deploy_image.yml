@@ -24,35 +24,36 @@ jobs:
       - name: Replace version in api.yml
         run: |
           sed -i "s/richer1018\/application:[0-9]\+\.[0-9]\+\.[0-9]\+/richer1018\/application:$RELEASE_VERSION/g" api.yml
-      - name: Build docker image
-        run: |
-          docker build -f Dockerfile -t richer1018/application:$RELEASE_VERSION .
-      - name: Push docker image
-        env:
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-        run: |
-          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
-          docker push richer1018/application:$RELEASE_VERSION
-  deploy-docker-image:
-    permissions:
-      contents: read
-
-    runs-on: self-hosted
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-      - name: Retrieve the secret and decode it to a file
-        env:
-          LOCAL_CONFIG: ${{ secrets.LOCAL_CONFIG }}
-        run: |
-          echo $LOCAL_CONFIG | base64 --decode > local.ini
-      - name: Set Release tag to env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      - name: Pull docker image
-        env:
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-        run: |
-          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
-          # 這邊要用 while 迴圈，因為有時候會 pull 失敗
-          while ! docker pull richer1018/application:$RELEASE_VERSION; do sleep 5; done
-          docker stack deploy --with-registry-auth -c api.yml api
+          cat api.yml
+#      - name: Build docker image
+#        run: |
+#          docker build -f Dockerfile -t richer1018/application:$RELEASE_VERSION .
+#      - name: Push docker image
+#        env:
+#          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+#        run: |
+#          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
+#          docker push richer1018/application:$RELEASE_VERSION
+#  deploy-docker-image:
+#    permissions:
+#      contents: read
+#
+#    runs-on: self-hosted
+#    steps:
+#      - name: Check out code
+#        uses: actions/checkout@v4
+#      - name: Retrieve the secret and decode it to a file
+#        env:
+#          LOCAL_CONFIG: ${{ secrets.LOCAL_CONFIG }}
+#        run: |
+#          echo $LOCAL_CONFIG | base64 --decode > local.ini
+#      - name: Set Release tag to env
+#        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+#      - name: Pull docker image
+#        env:
+#          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+#        run: |
+#          docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
+#          # 這邊要用 while 迴圈，因為有時候會 pull 失敗
+#          while ! docker pull richer1018/application:$RELEASE_VERSION; do sleep 5; done
+#          docker stack deploy --with-registry-auth -c api.yml api
