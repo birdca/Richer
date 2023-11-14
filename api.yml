@@ -1,7 +1,7 @@
 version: '3.0'
 services:
   api:
-    image: richer1018/application:9.0.10
+    image: richer1018/application:9.0.11
     ports:
       - 8888:8888
     hostname: "api"

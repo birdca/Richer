@@ -51,5 +51,5 @@ jobs:
           DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
           docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
-          docker pull richer1018/application:$RELEASE_VERSION
+          while docker pull richer1018/application:$RELEASE_VERSION; do sleep 5; done
           docker stack deploy --with-registry-auth -c api.yml api
