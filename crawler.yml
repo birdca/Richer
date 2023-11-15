@@ -1,6 +1,7 @@
 version: '3.0'
 services:
   crawler_twse:
+    # version maybe replaced by github action
     image: richer1018/application:9.0.9
     hostname: "twse"
     command: pipenv run celery -A financialdata.tasks.worker worker --loglevel=info --concurrency=1  --hostname=%h -Q twse

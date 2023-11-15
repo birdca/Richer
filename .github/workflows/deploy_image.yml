@@ -33,7 +33,7 @@ jobs:
         run: |
           docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
           docker push richer1018/application:$RELEASE_VERSION
-  deploy-docker-image:
+  deploy-api-by-latest-image:
     needs: build-docker-image
     permissions:
       contents: read
