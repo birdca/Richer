@@ -47,17 +47,16 @@ jobs:
           LOCAL_CONFIG: ${{ secrets.LOCAL_CONFIG }}
         run: |
           echo $LOCAL_CONFIG | base64 --decode > local.ini
+      - name: Set Release tag to env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Replace version in api.yml
         run: |
           sed -i "s/richer1018\/application:[0-9]\+\.[0-9]\+\.[0-9]\+/richer1018\/application:$RELEASE_VERSION/g" api.yml
-      - name: Set Release tag to env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Pull docker image
         env:
           DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
           docker login -u "richer1018" -p $DOCKER_HUB_TOKEN
           docker pull richer1018/application:$RELEASE_VERSION
-          echo "Pull docker image success, start to deploy"
       - name: Deploy docker image
         run: docker stack deploy --with-registry-auth -c api.yml api
