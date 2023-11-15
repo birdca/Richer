@@ -60,5 +60,4 @@ jobs:
           docker pull richer1018/application:$RELEASE_VERSION
           echo "Pull docker image success, start to deploy"
       - name: Deploy docker image
-        run: |
-          docker stack deploy --with-registry-auth -c api.yml api
+        run: docker stack deploy --with-registry-auth -c api.yml api
