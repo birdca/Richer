@@ -1,7 +1,8 @@
 version: '3.0'
 services:
   crawler_twse:
-    image: richer1018/crawler:7.2.1
+    # version maybe replaced by github action
+    image: richer1018/application:9.0.9
     hostname: "twse"
     command: pipenv run celery -A financialdata.tasks.worker worker --loglevel=info --concurrency=1  --hostname=%h -Q twse
     restart: always
@@ -17,7 +18,7 @@ services:
       - my_network
 
   crawler_tpex:
-    image: richer1018/crawler:7.2.1
+    image: richer1018/application:9.0.9
     hostname: "tpex"
     command: pipenv run celery -A financialdata.tasks.worker worker --loglevel=info --concurrency=1  --hostname=%h -Q tpex
     restart: always
@@ -33,7 +34,8 @@ services:
       - my_network
 
   crawler_taifex:
-    image: richer1018/crawler:7.2.1
+    # version maybe replaced by github action
+    image: richer1018/application:9.0.9
     hostname: "taifex"
     command: pipenv run celery -A financialdata.tasks.worker worker --loglevel=info --concurrency=1  --hostname=%h -Q taifex
     restart: always
