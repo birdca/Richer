@@ -21,6 +21,15 @@ def get_completion(prompt, model=llm_model):
     return response.choices[0].message.content
 
 
+def get_completion_in_html(prompt):
+  response = get_completion(prompt)
+  html_prompt = f"""
+  Format everything in {response} as HTML that can be used in a website.
+  Place the description in a <div> element.
+  """
+  return get_completion(html_prompt)
+
+
 """
 Use langchain ChatOpenAI and ChatPromptTemplate to get a completion for a prompt for single-turn chat.
 but response is not a dict, it is a ChatResponse object.
