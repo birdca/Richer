@@ -52,10 +52,12 @@ vine = "==5.0.0"
 wcwidth = "==0.2.6"
 werkzeug = "==2.3.6"
 win32-setctime = "==1.1.0"
-richer = {editable = true, path = "."}
+richer = { editable = true, path = "." }
 pytest = "*"
 httpx = "*"
 pytest-cov = "*"
 pytest-mock = "*"
+openai = "1.3.5"
+langchain = "0.0.340"
 
 [dev-packages]
