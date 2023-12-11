@@ -40,10 +40,10 @@ chat = ChatOpenAI(temperature=0.0, model=llm_model)
 def get_stylish_completion(prompt, style="Passionate and friendly"):
     template_string = """Consider the text \
     that is delimited by triple backticks \
-    and respond it with a style that is {style}. \
+    and respond it with a style that is {style} within 100 tokens. \
     text: ```{prompt}```
     """
     prompt_template = ChatPromptTemplate.from_template(template_string)
-    messages = prompt_template.format_messages(style=style, text=prompt)
+    messages = prompt_template.format_messages(style=style, prompt=prompt)
     response = chat(messages)
     return response.content
