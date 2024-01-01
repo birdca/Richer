@@ -1,5 +1,6 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain.chat_models import ChatOpenAI
+from langchain.chains import LLMChain, SimpleSequentialChain, SequentialChain
 from llm.config import OPENAI_API_KEY
 from openai import OpenAI
 
@@ -38,3 +39,48 @@ def get_stylish_completion(prompt, style="Passionate and friendly"):
     messages = prompt_template.format_messages(style=style, prompt=prompt)
     response = chat(messages)
     return response.content
+
+
+def llmChain(prompt_input: str, chain_input: str):
+    llm = ChatOpenAI(temperature=0.9, model=llm_model)
+    prompt = ChatPromptTemplate.from_template(prompt_input)
+    chain = LLMChain(llm=llm, prompt=prompt)
+
+    return chain.run(chain_input)
+
+
+def simpleSequentialChain(prompts: list, chain_input: str):
+    llm = ChatOpenAI(temperature=0.9, model=llm_model)
+
+    chains = []
+    for prompt in prompts:
+        chatPrompt = ChatPromptTemplate.from_template(prompt)
+        chains += [LLMChain(llm=llm, prompt=chatPrompt)]
+
+    overall_simple_chain = SimpleSequentialChain(
+        chains=chains, verbose=True
+    )
+
+    return overall_simple_chain.run(chain_input)
+
+
+def sequentialChain(prompts_and_outputs, review, inputs):
+    llm = ChatOpenAI(temperature=0.9, model=llm_model)
+
+    chains, outputs = [], []
+    for prompt, output in prompts_and_outputs:
+        chatPrompt = ChatPromptTemplate.from_template(prompt)
+        chain = LLMChain(
+            llm=llm, prompt=chatPrompt, output_key=output
+        )
+        chains += [chain]
+        outputs += [output]
+
+    overall_chain = SequentialChain(
+        chains=chains,
+        input_variables=inputs,
+        output_variables=outputs,
+        verbose=True
+    )
+
+    return overall_chain(review)
