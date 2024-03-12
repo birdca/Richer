@@ -1,9 +1,7 @@
 import os
 import openai
 from dotenv import load_dotenv, find_dotenv
-from langchain_community.document_loaders.blob_loaders.youtube_audio import (
-    YoutubeAudioLoader,
-)
+
 from langchain_community.document_loaders.generic import GenericLoader
 from langchain_community.document_loaders.parsers.audio import (
     OpenAIWhisperParser,
