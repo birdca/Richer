@@ -39,5 +39,7 @@ ffprobe = "*"
 ffmpeg = "*"
 python-dotenv = "*"
 unstructured = "*"
+yt-dlp = "*"
+librosa = "*"
 
 [dev-packages]
