@@ -41,5 +41,6 @@ python-dotenv = "*"
 unstructured = "*"
 yt-dlp = "*"
 librosa = "*"
+chromadb = "*"
 
 [dev-packages]
